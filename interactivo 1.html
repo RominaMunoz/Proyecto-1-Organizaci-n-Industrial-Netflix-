@@ -1,286 +1,577 @@
+<!DOCTYPE html>
+<html lang="es">
 <head>
-<!-- ====== CONFIGURACIÓN BÁSICA ====== -->
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0"><!-- Hace que la página sea responsive (se adapta a celulares y pantallas pequeñas) -->
-<title>Integración Vertical - Netflix</title><!-- Título que aparece en la pestaña del navegador -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Integración Vertical — Netflix</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
 <style>
-/* ====== ESTILO GENERAL ====== */
-body {
-    margin: 0; /* elimina márgenes por defecto */
-    font-family: 'Inter', sans-serif; /* tipografía */
-    background: radial-gradient(circle at top, #1a1a1a, #000);/* fondo degradado tipo Netflix */
-    color: white; /* texto blanco */
-    text-align: center; /* centra el contenido */
-}
-/* TÍTULO PRINCIPAL */
-h1 {
-    margin-top: 40px;
-    font-size: 2.6em;
-    font-weight: 800; /* más grueso */
-}
-/* ====== CONTENEDOR GENERAL ====== */
-.container {
+  :root {
+    --red: #E50914;
+    --red-dim: rgba(229,9,20,0.15);
+    --red-glow: rgba(229,9,20,0.4);
+    --bg: #080808;
+    --surface: #111;
+    --surface2: #1a1a1a;
+    --border: rgba(255,255,255,0.07);
+    --text: #f0f0f0;
+    --muted: rgba(255,255,255,0.45);
+    --accent: #4FC3F7;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* ── GRAIN OVERLAY ── */
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 999; opacity: 0.6;
+  }
+
+  /* ── RADIAL BACKGROUND GLOW ── */
+  .bg-glow {
+    position: fixed;
+    width: 700px; height: 700px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(229,9,20,0.08) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -60%);
+    pointer-events: none;
+    transition: opacity 0.8s ease;
+  }
+
+  /* ── LAYOUT ── */
+  .page {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 0 20px;
-    max-width: 1000px;
-}
-/* ====== ENGRANAJE ====== */
-.gear-container {
-    position: relative;
-    width: 280px;
-    height: 280px;
-    margin: 40px auto 20px auto; /* centrado real y balance vertical */
-}
-/* CÍRCULO PRINCIPAL */
-.gear {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background: radial-gradient(circle, #2a2a2a 40%, #111 41%);
-    transition: transform 0.6s ease;
-    box-shadow: 0 0 40px rgba(229,9,20,0.3);
+    padding: 60px 24px 80px;
+    max-width: 860px;
+    margin: 0 auto;
+    gap: 0;
+  }
+
+  /* ── HEADER ── */
+  .header {
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 52px;
+  }
+
+  .tag {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.7em;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--red);
+    border: 1px solid rgba(229,9,20,0.35);
+    padding: 5px 14px;
+    border-radius: 100px;
+    backdrop-filter: blur(4px);
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3em, 8vw, 5.5em);
+    letter-spacing: 0.04em;
+    line-height: 0.95;
+    color: #fff;
+    text-align: center;
+  }
+
+  h1 span { color: var(--red); }
+
+  .subtitle {
+    font-size: 0.9em;
+    color: var(--muted);
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    text-align: center;
+    max-width: 440px;
+    line-height: 1.6;
+  }
+
+  /* ── GEAR SECTION ── */
+  .gear-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    width: 100%;
+  }
+
+  .gear-wrapper {
+    position: relative;
+    width: 220px;
+    height: 220px;
+  }
+
+  /* Outer ring */
+  .gear-ring {
+    position: absolute; inset: -18px;
+    border-radius: 50%;
+    background: conic-gradient(
+      #222 0deg 13deg, #1a1a1a 13deg 26deg,
+      #222 26deg 39deg, #1a1a1a 39deg 52deg,
+      #222 52deg 65deg, #1a1a1a 65deg 78deg,
+      #222 78deg 91deg, #1a1a1a 91deg 104deg,
+      #222 104deg 117deg, #1a1a1a 117deg 130deg,
+      #222 130deg 143deg, #1a1a1a 143deg 156deg,
+      #222 156deg 169deg, #1a1a1a 169deg 182deg,
+      #222 182deg 195deg, #1a1a1a 195deg 208deg,
+      #222 208deg 221deg, #1a1a1a 221deg 234deg,
+      #222 234deg 247deg, #1a1a1a 247deg 260deg,
+      #222 260deg 273deg, #1a1a1a 273deg 286deg,
+      #222 286deg 299deg, #1a1a1a 299deg 312deg,
+      #222 312deg 325deg, #1a1a1a 325deg 338deg,
+      #222 338deg 351deg, #1a1a1a 351deg 360deg
+    );
+    transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 0 60px var(--red-glow), 0 0 120px rgba(229,9,20,0.1);
+  }
+
+  .gear-face {
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #2a2a2a, #0d0d0d);
+    display: flex;
+    align-items: center;
     justify-content: center;
-    align-items: center; /* centra la N dentro del círculo *
-}
-/* DIENTES DEL ENGRANAJE */
-.gear::before {
+    box-shadow: inset 0 2px 20px rgba(0,0,0,0.8), inset 0 0 60px rgba(229,9,20,0.06);
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .netflix-n {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 7em;
+    color: var(--red);
+    line-height: 1;
+    text-shadow: 0 0 40px rgba(229,9,20,0.6), 0 0 80px rgba(229,9,20,0.2);
+    user-select: none;
+    transition: text-shadow 0.5s ease;
+  }
+
+  /* ── FLOW CHAIN ── */
+  .flow-chain {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    opacity: 0.3;
+    transition: opacity 0.5s ease;
+  }
+  .flow-chain.active { opacity: 1; }
+
+  .flow-node {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.82em;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    transition: all 0.4s ease;
+    white-space: nowrap;
+  }
+  .flow-node.lit {
+    color: #fff;
+    border-color: var(--red);
+    background: var(--red-dim);
+    box-shadow: 0 0 20px var(--red-dim);
+  }
+
+  .flow-arrow {
+    width: 36px;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(229,9,20,0.5), rgba(229,9,20,0.2));
+    position: relative;
+    flex-shrink: 0;
+  }
+  .flow-arrow::after {
     content: "";
     position: absolute;
-    width: 310px;
-    height: 310px;
-    top: -25px;
-    left: -25px;
-    background: repeating-conic-gradient(#444 0deg 12deg, #111 12deg 24deg);/* crea patrón circular tipo engranaje */
-    border-radius: 50%;
-    z-index: -1; /* queda detrás */
-}
-/* ====== LOGO NETFLIX ====== */
-.netflix-logo {
-    font-size: 5.5em;
-    font-weight: 900;
-    color: #E50914;
-    line-height: 1;
-}
-/* ====== FLUJO (PRODUCCIÓN → DISTRIBUCIÓN) ====== */
-.flow {
-    .flow {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 60px;
-    margin-top: 10px;
-    opacity: 0.6;
-}
-.flow.active {
-    opacity: 1; /* se ilumina cuando está activo */
-}
-/* ETAPAS */
-.step {
-    padding: 10px 20px;
-    border-radius: 20px;
-    background: #222;
-    font-size: 0.95em;
-    min-width: 120px;
-    text-align: center;
-}
-/* ====== SLIDER ====== */
-.slider-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 20px;
-    width: 100%;
-}
-/* TEXTO DE LOS EXTREMOS */
-.label {
-    font-size: 0.8em;
-    opacity: 0.7;
-    min-width: 100px;
-    text-align: center;
-}
+    right: 0; top: -4px;
+    border: 5px solid transparent;
+    border-left-color: rgba(229,9,20,0.5);
+  }
 
-input[type="range"] {
+  /* ── SLIDER ── */
+  .slider-block {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin-top: 8px;
+  }
+
+  .slider-labels {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 480px;
+  }
+
+  .slider-label {
+    font-size: 0.72em;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .slider-label .arrow { font-size: 1.1em; }
+
+  input[type="range"] {
     -webkit-appearance: none;
-    width: 380px;
-    height: 10px;
-    background: linear-gradient(90deg, #444, #E50914, #444);
-    border-radius: 20px;
-    display: block;
-}
-/* BARRA */
-input[type="range"] {
-    -webkit-appearance: none;
-    width: 380px; 
-    height: 12px; 
-    background: linear-gradient(90deg, #444, #E50914, #444);
-    border-radius: 20px;
+    appearance: none;
+    width: 100%;
+    max-width: 480px;
+    height: 4px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, rgba(229,9,20,0.6), rgba(229,9,20,0.3), rgba(229,9,20,0.6));
     outline: none;
-    display: block;
-    margin: 0 auto;
-}
-/* BOTÓN DEL SLIDER */
-input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 24px;
-    height: 24px;
-    background: #E50914;
-    border-radius: 50%;
     cursor: pointer;
-    border: 2px solid #fff;
-}
-/* ====== TEXTO DINÁMICO ====== */
-.text-box {
-    max-width: 900px;
-    margin-top: 30px;
-    font-size: 1.1em;
-    line-height: 1.7;
-    text-align: justify; /* 🔥 texto justificado */
-    letter-spacing: 0.3px;
-    opacity: 0; /* oculto al inicio */
-    transform: translateY(10px);
-    transition: all 0.4s ease;
-    
-}
-/* CUANDO APARECE */
-.text-box.active {
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--red);
+    border: 3px solid #fff;
+    box-shadow: 0 0 16px var(--red-glow);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+    box-shadow: 0 0 28px var(--red-glow);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--red);
+    border: 3px solid #fff;
+    box-shadow: 0 0 16px var(--red-glow);
+    cursor: pointer;
+  }
+
+  .slider-state {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4em;
+    letter-spacing: 0.12em;
+    color: var(--red);
+    min-height: 1.5em;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    width: 100%;
+    max-width: 680px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 40px 0;
+  }
+
+  /* ── TEXT CARD ── */
+  .text-card {
+    width: 100%;
+    max-width: 720px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px 40px;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.45s ease, transform 0.45s ease;
+    min-height: 200px;
+  }
+  .text-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--red), transparent);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  .text-card.active {
     opacity: 1;
     transform: translateY(0);
-}
-/* LINKS INTERACTIVOS */
-a {
-    color: #4FC3F7;
-    border-bottom: 1px dashed #4FC3F7;
-    cursor: pointer;
-}
-/* ====== CUADRO PEQUEÑO ====== */
-.tooltip {
-    position: absolute;
-    background: rgba(20,20,20,0.95);
-    padding: 12px;
+  }
+  .text-card.active::before { opacity: 1; }
+
+  .text-card p {
+    font-size: 1em;
+    font-weight: 300;
+    line-height: 1.85;
+    text-align: justify;
+    color: rgba(255,255,255,0.82);
+    letter-spacing: 0.015em;
+  }
+  .text-card p + p { margin-top: 16px; }
+
+  /* hint for neutral state */
+  .hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 0.88em;
+    color: var(--muted);
+    font-style: italic;
+    padding: 32px 0;
+  }
+  .hint-icon {
+    width: 36px; height: 36px;
+    border: 1px dashed rgba(229,9,20,0.4);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1em;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.1); }
+  }
+
+  /* ── TOOLTIP ── */
+  .tooltip {
+    position: fixed;
+    background: rgba(15,15,15,0.97);
+    border: 1px solid rgba(229,9,20,0.3);
+    padding: 12px 16px;
     border-radius: 10px;
-    max-width: 280px;
-    display: none;
+    max-width: 260px;
+    font-size: 0.82em;
+    line-height: 1.5;
+    color: rgba(255,255,255,0.85);
+    pointer-events: none;
     opacity: 0;
-    transition: all 0.25s;
-}
-/* TRIÁNGULO DEL TOOLTIP */
-.tooltip::after {
-    content: "";
-    position: absolute;
-    top: -8px;
-    left: 20px;
-    border: 8px solid transparent;
-    border-bottom-color: rgba(20,20,20,0.95);
-}
-/* CUANDO SE MUESTRA */
-.tooltip.show {
-    display: block;
+    transform: translateY(-4px);
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 100;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  }
+  .tooltip.show {
     opacity: 1;
-}
-/* ICONOS */
-.icon {
-    font-size: 1.2em;
-    margin-right: 5px;
-}
+    transform: translateY(0);
+  }
+
+  /* ── LINKS ── */
+  a.term {
+    color: var(--accent);
+    border-bottom: 1px dashed rgba(79,195,247,0.4);
+    cursor: pointer;
+    text-decoration: none;
+    transition: border-color 0.2s;
+  }
+  a.term:hover { border-color: var(--accent); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 540px) {
+    .text-card { padding: 24px 20px; }
+    .flow-node { font-size: 0.72em; padding: 8px 12px; }
+  }
 </style>
 </head>
 <body>
-<h1>Integración Vertical</h1>
-<div class="container">
 
-    <div class="gear-container">
-        <div class="gear" id="gear">
-            <div class="netflix-logo">N</div>
-        </div>
+<div class="bg-glow" id="bgGlow"></div>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <span class="tag">Economía de la Empresa</span>
+    <h1>Integración<br><span>Vertical</span></h1>
+    <p class="subtitle">Cómo Netflix controla su cadena de valor — desde la producción hasta la pantalla del usuario.</p>
+  </div>
+
+  <!-- GEAR + FLOW -->
+  <div class="gear-section">
+    <div class="gear-wrapper">
+      <div class="gear-ring" id="gearRing"></div>
+      <div class="gear-face">
+        <div class="netflix-n" id="netflixN">N</div>
+      </div>
     </div>
 
-    <div class="flow" id="flow">
-        <div class="step"> Producción</div>
-        <div class="step"> Distribución</div>
+    <div class="flow-chain" id="flowChain">
+      <div class="flow-node" id="nodeContent">Contenido</div>
+      <div class="flow-arrow"></div>
+      <div class="flow-node" id="nodeProduction">Producción</div>
+      <div class="flow-arrow"></div>
+      <div class="flow-node" id="nodeDistrib">Distribución</div>
+      <div class="flow-arrow"></div>
+      <div class="flow-node" id="nodeUser">Usuario</div>
     </div>
+  </div>
 
-    <div class="slider-container">
-        <div class="label">Hacia Atrás</div>
-        <input type="range" min="0" max="2" step="1" value="1" id="slider">
-        <div class="label">Hacia Adelante </div>
+  <!-- SLIDER -->
+  <div class="slider-block" style="margin-top: 36px;">
+    <div class="slider-labels">
+      <span class="slider-label"><span class="arrow">←</span> Hacia Atrás</span>
+      <span class="slider-label">Hacia Adelante <span class="arrow">→</span></span>
     </div>
+    <input type="range" min="0" max="2" step="1" value="1" id="slider">
+    <div class="slider-state" id="sliderState">Explora la cadena de valor</div>
+  </div>
 
-    <div class="text-box" id="text"></div>
+  <div class="divider"></div>
+
+  <!-- TEXT CARD -->
+  <div class="text-card" id="textCard">
+    <div class="hint">
+      <div class="hint-icon">⟷</div>
+      Desliza para explorar las decisiones estratégicas de Netflix
+    </div>
+  </div>
 
 </div>
 
+<!-- TOOLTIP -->
 <div class="tooltip" id="tooltip"></div>
 
 <script>
+  const slider = document.getElementById("slider");
+  const textCard = document.getElementById("textCard");
+  const gearRing = document.getElementById("gearRing");
+  const sliderState = document.getElementById("sliderState");
+  const flowChain = document.getElementById("flowChain");
+  const tooltip = document.getElementById("tooltip");
 
-const slider = document.getElementById("slider");
-const text = document.getElementById("text");
-const gear = document.getElementById("gear");
-const tooltip = document.getElementById("tooltip");
-const flow = document.getElementById("flow");
+  const nodes = {
+    content: document.getElementById("nodeContent"),
+    production: document.getElementById("nodeProduction"),
+    distrib: document.getElementById("nodeDistrib"),
+    user: document.getElementById("nodeUser"),
+  };
 
-function showTooltip(event, content) {
-    tooltip.innerHTML = content;
-
-    const rect = event.target.getBoundingClientRect();
-    tooltip.style.left = rect.left + "px";
-    tooltip.style.top = (rect.bottom + window.scrollY + 10) + "px";
-
+  // ── TOOLTIP ──
+  function showTooltip(e, html) {
+    tooltip.innerHTML = html;
     tooltip.classList.add("show");
-}
+    positionTooltip(e);
+  }
+  function positionTooltip(e) {
+    const x = e.clientX, y = e.clientY;
+    const tw = 260, th = 80;
+    let left = x + 12, top = y - th - 12;
+    if (left + tw > window.innerWidth) left = x - tw - 12;
+    if (top < 8) top = y + 16;
+    tooltip.style.left = left + "px";
+    tooltip.style.top = top + "px";
+  }
+  document.addEventListener("mousemove", (e) => {
+    if (tooltip.classList.contains("show")) positionTooltip(e);
+  });
+  document.addEventListener("click", (e) => {
+    if (!e.target.matches("a.term")) tooltip.classList.remove("show");
+  });
 
-document.addEventListener("click", (e) => {
-    if (!e.target.matches("a")) tooltip.classList.remove("show");
-});
+  // ── NODE HIGHLIGHT ──
+  function highlightNodes(which) {
+    Object.values(nodes).forEach(n => n.classList.remove("lit"));
+    which.forEach(k => nodes[k] && nodes[k].classList.add("lit"));
+    flowChain.classList.toggle("active", which.length > 0);
+  }
 
-function updateContent() {
+  // ── CONTENT ──
+  const states = [
+    {
+      label: "Integración Hacia Atrás",
+      rotation: -110,
+      nodes: ["content", "production"],
+      html: `
+        <p>Netflix ha profundizado su <strong>integración vertical hacia atrás</strong> al desarrollar internamente una parte significativa de su contenido (<em>Originals</em>). Esta decisión le permite reducir su dependencia de estudios externos y asegurar un flujo constante de producciones alineadas con su estrategia y preferencias de audiencia.</p>
+        <p>Desde el punto de vista económico, esta integración disminuye los <a class="term" data-tip="Costos de usar el mercado: buscar proveedores, negociar acuerdos y supervisarlos.">costos de transacción</a>, al evitar procesos complejos de negociación con terceros. Además, reduce el <a class="term" data-tip="Riesgo de que otros actúen en su propio beneficio dentro de un acuerdo contractual.">riesgo de oportunismo</a>, especialmente relevante cuando existen inversiones específicas o relaciones contractuales prolongadas.</p>
+        <p>En este contexto, la producción interna no solo responde a una decisión creativa, sino también a una lógica de eficiencia y control en un entorno donde el contenido es un activo estratégico clave.</p>
+      `
+    },
+    {
+      label: "Explora la cadena de valor",
+      rotation: 0,
+      nodes: [],
+      html: `
+        <div class="hint">
+          <div class="hint-icon">⟷</div>
+          Desliza para explorar las decisiones estratégicas de Netflix
+        </div>
+      `
+    },
+    {
+      label: "Integración Hacia Adelante",
+      rotation: 110,
+      nodes: ["distrib", "user"],
+      html: `
+        <p>De manera complementaria, Netflix ha avanzado en <strong>integración vertical hacia adelante</strong> al controlar directamente la distribución de su contenido a través de su infraestructura tecnológica (<em>Open Connect CDN</em>). Esto le permite gestionar de forma eficiente la entrega del servicio y garantizar una experiencia consistente a nivel global.</p>
+        <p>Desde la perspectiva organizacional, esta decisión reduce los <a class="term" data-tip="Costos de organizar y gestionar actividades dentro de la empresa, en lugar de contratarlas externamente.">costos de coordinación</a>, al centralizar procesos clave y evitar intermediarios en la entrega de contenido. Asimismo, facilita control sobre variables críticas como la calidad del streaming y la estabilidad del servicio.</p>
+        <p>En este caso, la integración hacia adelante refleja una estrategia orientada a optimizar la operación y fortalecer la capacidad de adaptarse a la demanda en tiempo real.</p>
+      `
+    }
+  ];
 
-    text.classList.remove("active");
+  function update() {
+    const v = parseInt(slider.value);
+    const s = states[v];
 
+    // Gear
+    gearRing.style.transition = "transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)";
+    gearRing.style.transform = `rotate(${s.rotation}deg)`;
+
+    // State label
+    sliderState.style.opacity = 0;
     setTimeout(() => {
+      sliderState.textContent = s.label;
+      sliderState.style.opacity = 1;
+    }, 180);
 
-        if (slider.value == 0) {
-            gear.style.transform = "rotate(-100deg)";
-            flow.classList.add("active");
+    // Nodes
+    highlightNodes(s.nodes);
 
-            text.innerHTML = `
-            <span class="icon"></span>
-            Netflix ha profundizado su integración vertical hacia atrás al desarrollar internamente una parte significativa de su contenido (<i>Originals</i>). Esta decisión le permite reducir su dependencia de estudios externos y asegurar un flujo constante de producciones alineadas con su estrategia y preferencias de audiencia.
-            Desde el punto de vista económico, esta integración disminuye los <a onclick="showTooltip(event,'Costos de usar el mercado: buscar proveedores, negociar acuerdos y supervisarlos.')">costos de transacción</a>, al evitar procesos complejos de negociación y supervisión con terceros. Además, reduce el <a onclick="showTooltip(event,'Riesgo de que otros actúen en su propio beneficio dentro de un acuerdo.')">riesgo de oportunismo</a>, especialmente relevante cuando existen inversiones específicas o relaciones contractuales prolongadas.
-            En este contexto, la producción interna no solo responde a una decisión creativa, sino también a una lógica de eficiencia y control en un entorno donde el contenido es un activo estratégico clave.
-            `;
-        } 
-        else if (slider.value == 1) {
-            gear.style.transform = "rotate(0deg)";
-            flow.classList.remove("active");
+    // Text card
+    textCard.classList.remove("active");
+    setTimeout(() => {
+      textCard.innerHTML = s.html;
 
-            text.innerHTML = `
-            Desliza hacia la izquierda o derecha para explorar cómo Netflix integra distintas etapas de su cadena de valor. Este movimiento refleja el equilibrio entre operar en el mercado y organizar internamente sus actividades. 
-            `;
-        }
-        else {
-            gear.style.transform = "rotate(100deg)";
-            flow.classList.add("active");
+      // Attach tooltip events after innerHTML is set
+      textCard.querySelectorAll("a.term").forEach(el => {
+        el.addEventListener("click", (e) => {
+          e.stopPropagation();
+          showTooltip(e, el.dataset.tip);
+        });
+      });
 
-            text.innerHTML = `
-            <span class="icon"></span>
-            De manera complementaria, Netflix ha avanzado en integración vertical hacia adelante al controlar directamente la distribución de su contenido a través de su infraestructura tecnológica (<i>Open Connect CDN</i>). Esto le permite gestionar de forma más eficiente la entrega del servicio y asegurar una experiencia de usuario consistente a nivel global.
-            Desde la perspectiva organizacional, esta decisión reduce los <a onclick="showTooltip(event,'Costos de organizar y gestionar actividades dentro de la empresa.')">costos de coordinación</a>, al centralizar procesos clave y evitar depender de intermediarios en la entrega del contenido. Asimismo, facilita un mayor control sobre variables críticas como la calidad del streaming y la estabilidad del servicio.
-            En este caso, la integración hacia adelante refleja una estrategia orientada a optimizar la operación y fortalecer la capacidad de la empresa para adaptarse a la demanda en tiempo real. 
-            `;
-        }
-        text.classList.add("active");
-    }, 150);
-}
+      textCard.classList.add("active");
+    }, 220);
+  }
 
-slider.addEventListener("input", updateContent);
-updateContent();
+  slider.addEventListener("input", update);
 
+  // Init
+  update();
 </script>
-
 </body>
 </html>
