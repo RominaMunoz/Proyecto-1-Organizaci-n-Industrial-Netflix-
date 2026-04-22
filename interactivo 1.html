@@ -80,7 +80,6 @@ h1 {
 }
 /* ETAPAS */
 .step {
-    .step {
     padding: 10px 20px;
     border-radius: 20px;
     background: #222;
@@ -99,29 +98,40 @@ h1 {
 }
 /* TEXTO DE LOS EXTREMOS */
 .label {
-    width: 120px;
+    font-size: 0.8em;
+    opacity: 0.7;
+    min-width: 100px;
     text-align: center;
 }
 
 input[type="range"] {
-    width: 420px;
+    -webkit-appearance: none;
+    width: 380px;
+    height: 10px;
+    background: linear-gradient(90deg, #444, #E50914, #444);
+    border-radius: 20px;
+    display: block;
 }
 /* BARRA */
 input[type="range"] {
     -webkit-appearance: none;
-    width: 360px;
-    height: 10px;
+    width: 380px; 
+    height: 12px; 
     background: linear-gradient(90deg, #444, #E50914, #444);
     border-radius: 20px;
+    outline: none;
+    display: block;
+    margin: 0 auto;
 }
 /* BOTÓN DEL SLIDER */
 input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 22px;
-    height: 22px;
+    width: 24px;
+    height: 24px;
     background: #E50914;
     border-radius: 50%;
     cursor: pointer;
+    border: 2px solid #fff;
 }
 /* ====== TEXTO DINÁMICO ====== */
 .text-box {
