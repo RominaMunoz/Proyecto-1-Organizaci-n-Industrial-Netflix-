@@ -1,1 +1,0 @@
-# Proyecto-1-Organizaci-n-Industrial-Netflix-
