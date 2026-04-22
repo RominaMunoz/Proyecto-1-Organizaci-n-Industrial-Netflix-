@@ -23,6 +23,7 @@ h1 {
     display: flex;
     flex-direction: column;
     align-items: center;/* organiza los elementos en columna y centrados */
+    padding: 0 20px; /* agrega margen lateral */
 }
 /* ====== ENGRANAJE ====== */
 .gear-container {
@@ -112,13 +113,16 @@ input[type="range"]::-webkit-slider-thumb {
 }
 /* ====== TEXTO DINÁMICO ====== */
 .text-box {
-    max-width: 700px;
-    margin-top: 25px;
+    max-width: 900px;
+    margin-top: 30px;
     font-size: 1.1em;
-    line-height: 1.6;
+    line-height: 1.7;
+    text-align: justify; /* 🔥 texto justificado */
+    letter-spacing: 0.3px;
     opacity: 0; /* oculto al inicio */
     transform: translateY(10px);
     transition: all 0.4s ease;
+    
 }
 /* CUANDO APARECE */
 .text-box.active {
