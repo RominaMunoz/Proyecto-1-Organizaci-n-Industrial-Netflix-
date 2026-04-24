@@ -51,7 +51,55 @@ h2 {
     text-align: justify; /* texto alineado en ambos lados */
     box-shadow: 0 0 15px rgba(229,9,20,0.2); /* sombra roja suave */
 }
-    
+
+.interactive-panel {
+    background: #181818;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 18px;
+    margin-top: 20px;
+}
+
+.interactive-panel h3 {
+    margin-top: 0;
+    color: #fff;
+}
+
+.option-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.option-buttons button {
+    background: #E50914;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.option-buttons button:hover {
+    transform: translateY(-2px);
+    background: #ff233f;
+}
+
+.factor-info {
+    margin-top: 16px;
+    padding: 18px;
+    background: #0f0f0f;
+    border: 1px solid #222;
+    border-radius: 10px;
+    line-height: 1.6;
+}
+
+.factor-info strong {
+    color: #E50914;
+}
+
 /* ====== FONDO OSCURO ====== */
 .overlay {
 
@@ -112,6 +160,19 @@ Sin embargo, integrar actividades dentro de la empresa también tiene costos. A 
 <p>
 En este contexto, el nivel óptimo de integración se alcanza cuando se logra equilibrar estos dos tipos de costos, minimizando el costo total. Este marco teórico resulta clave para analizar el caso de Netflix, ya que permite entender por qué la empresa ha decidido avanzar hacia un modelo más integrado, tanto en la producción como en la distribución de contenido, con el objetivo de ganar control, reducir riesgos y mejorar su eficiencia en un entorno altamente competitivo.
 </p>
+
+<div class="interactive-panel">
+  <h3>Explora el equilibrio: mercado vs empresa</h3>
+  <p>Selecciona un factor para ver cómo influye en la decisión de internalizar actividades o usar el mercado.</p>
+  <div class="option-buttons">
+    <button onclick="showFactor('transaccion')">Costos de transacción</button>
+    <button onclick="showFactor('especificidad')">Especificidad de activos</button>
+    <button onclick="showFactor('coordinacion')">Costos de coordinación</button>
+  </div>
+  <div id="factorInfo" class="factor-info">
+    Haz clic en uno de los botones para leer una explicación interactiva.
+  </div>
+</div>
 
 </div>
 
@@ -207,6 +268,25 @@ function closeModal(){
 
     /* Oculta el fondo oscuro */
     overlay.style.display = "none";
+}
+
+function showFactor(type) {
+    const factorInfo = document.getElementById("factorInfo");
+    let message = "";
+
+    if (type === "transaccion") {
+        message = "<strong>Costos de transacción:</strong> cuando son altos, el mercado se vuelve menos eficiente y la empresa tiende a internalizar actividades para evitar gastos de búsqueda, negociación y supervisión. Esto favorece la integración vertical.";
+    }
+
+    if (type === "especificidad") {
+        message = "<strong>Especificidad de activos:</strong> si los recursos o inversiones solo sirven bien en un uso concreto, el riesgo de depender del mercado aumenta. En esos casos, la empresa puede optar por controlar internamente la producción y distribución.";
+    }
+
+    if (type === "coordinacion") {
+        message = "<strong>Costos de coordinación:</strong> al crecer la integración, la empresa enfrenta mayor complejidad interna. Si estos costos son demasiado altos, conviene delegar al mercado en vez de asumir más burocracia.";
+    }
+
+    factorInfo.innerHTML = message;
 }
 
 </script>
