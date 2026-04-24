@@ -72,18 +72,33 @@ h2 {
 }
 
 .slider-item {
-    flex: 0 0 55%;
+    flex: 0 0 45%;
     box-sizing: border-box;
     scroll-snap-align: center;
 }
 
 .slider-item .card {
     margin: 0;
-    min-height: 110px;
-    aspect-ratio: 2 / 3;
+    padding: 25px;
+    min-height: auto;
+    max-height: 480px;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+}
+
+.slider-item .card h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #E50914;
+    font-size: 16px;
+}
+
+.slider-item .card p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
 }
 
 .nav-button {
