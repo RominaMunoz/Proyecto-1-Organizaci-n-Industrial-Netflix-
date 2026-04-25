@@ -2,320 +2,660 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Proyecto Organización Industrial - Netflix</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:      #000;
+  --bg2:     #0f0f0f;
+  --bg3:     #1a1a1a;
+  --border:  rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --text:    #e8e6e0;
+  --muted:   #7a7870;
+  --accent:  #E50914;
+  --red:     #E50914;
+  --purple:  #9b8fd4;
+  --teal:    #5ecdc8;
+  --green:   #72b87a;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'DM Sans', 'Inter', sans-serif;
+  --font-mono:    'DM Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 
 body {
-    font-family: 'Inter', sans-serif;
-    background: #000;
-    color: white;
-    display: flex;
-    justify-content: center;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.65;
+  min-height: 100vh;
+  overflow-x: hidden;
+  display: flex;
+  justify-content: center;
 }
 
 .wrapper {
-    max-width: 1300px;
-    width: 100%;
-    padding: 0 20px 60px;
+  max-width: 1100px;
+  width: 100%;
+  padding: 0 30px 80px;
 }
 
-.embed-box iframe {
-    width: 100%;
-    border: none;
-    border-radius: 15px;
+/* ====== ENCABEZADO ====== */
+.page-header {
+  text-align: center;
+  padding: 48px 0 40px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 52px;
+}
+.page-header h1 {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 46px);
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.1;
+  margin-bottom: 10px;
+}
+.page-header h1 em { font-style: italic; color: var(--accent); }
+.page-header p {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  color: var(--muted);
+  text-transform: uppercase;
 }
 
+/* ====== SECTION LABEL ====== */
+.section-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border2);
+}
+
+.section-block { margin-bottom: 56px; }
+
+/* ====== CARD GENÉRICA ====== */
+.card {
+  background: var(--bg2);
+  padding: 28px;
+  border-radius: 14px;
+  margin: 0 0 20px;
+  border: 1px solid var(--border);
+}
+.card p { line-height: 1.75; margin-top: 10px; color: rgba(232,230,224,0.8); font-size: 14.5px; text-align: justify; }
+.card h2 {
+  font-family: var(--font-display);
+  color: var(--text);
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+a { color: var(--accent); cursor: pointer; text-decoration: underline; }
+
+.embed-box iframe { width: 100%; border: none; border-radius: 12px; }
 #interactivo1 { height: 1450px; }
 #interactivo2 { height: 1000px; }
 
-h1 {
-    text-align: center;
-    margin: 30px 0 10px;
-    color: #E50914;
+/* ====================================================
+   01 — TÉRMINOS CLAVE
+   ==================================================== */
+.terms-grid { display: flex; flex-direction: column; gap: 10px; }
+
+.term-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.25s, box-shadow 0.25s;
+  cursor: pointer;
+}
+.term-card:hover { border-color: var(--border2); }
+.term-card.open {
+  border-color: rgba(229,9,20,0.45);
+  box-shadow: 0 0 0 1px rgba(229,9,20,0.08), 0 8px 32px rgba(0,0,0,0.5);
 }
 
-h2 { color: #E50914; }
-
-.card {
-    background: #111;
-    padding: 25px;
-    border-radius: 12px;
-    margin: 15px 0;
-    text-align: justify;
-    box-shadow: 0 0 15px rgba(229,9,20,0.2);
+.term-trigger {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  user-select: none;
 }
 
-.card p { line-height: 1.7; margin-top: 10px; }
-
-a {
-    color: #E50914;
-    cursor: pointer;
-    text-decoration: underline;
+.term-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 6px 0;
+  width: 40px;
+  transition: all 0.25s;
+}
+.term-card.open .term-num {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(229,9,20,0.07);
 }
 
-/* ====== CARRUSEL ====== */
-.carousel-wrapper {
-    position: relative;
-    margin-top: 20px;
+.term-name {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.term-tagline { font-size: 12px; color: var(--muted); font-style: italic; }
+
+.term-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 1px;
+  padding: 3px 8px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  font-style: normal;
+}
+.badge-core     { background: rgba(229,9,20,0.10); color: #ff6670; border: 1px solid rgba(229,9,20,0.2); }
+.badge-agency   { background: rgba(155,143,212,0.12); color: var(--purple); border: 1px solid rgba(155,143,212,0.2); }
+.badge-contract { background: rgba(94,205,200,0.10); color: var(--teal); border: 1px solid rgba(94,205,200,0.2); }
+.badge-cost     { background: rgba(229,9,20,0.08); color: #e07070; border: 1px solid rgba(229,9,20,0.15); }
+.badge-size     { background: rgba(114,184,122,0.10); color: var(--green); border: 1px solid rgba(114,184,122,0.2); }
+
+.term-arrow {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted);
+  font-size: 12px;
+  transition: all 0.25s;
+  flex-shrink: 0;
+}
+.term-card.open .term-arrow {
+  background: rgba(229,9,20,0.1);
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: rotate(180deg);
 }
 
-.carousel-viewport {
-    overflow: hidden;
-    border-radius: 10px;
+.term-body { max-height: 0; overflow: hidden; transition: max-height 0.45s cubic-bezier(0.4,0,0.2,1); }
+.term-body-inner { padding: 20px 24px 24px; border-top: 1px solid var(--border); }
+
+.term-def { font-size: 14px; color: rgba(232,230,224,0.8); line-height: 1.75; margin-bottom: 16px; }
+
+.term-example {
+  background: var(--bg3);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 16px;
+}
+.example-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.example-text { font-size: 13px; color: var(--muted); line-height: 1.65; }
+.example-text strong { color: var(--text); font-weight: 500; }
+
+/* ====================================================
+   02 — CASO APLICADO
+   ==================================================== */
+.netflix-section {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--bg2);
 }
 
-.carousel-track {
-    display: flex;
-    transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+.netflix-hero {
+  background: linear-gradient(135deg, #110000 0%, #1c0606 40%, #111 100%);
+  padding: 48px 48px 40px;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(229,9,20,0.15);
+}
+.netflix-hero::before {
+  content: '';
+  position: absolute;
+  top: -80px; right: -80px;
+  width: 300px; height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(229,9,20,0.1) 0%, transparent 70%);
 }
 
-.carousel-slide {
-    flex: 0 0 50%;
-    padding: 0 8px;
+.netflix-logo-row { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+.netflix-logo {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--red);
+  letter-spacing: -2px;
+  line-height: 1;
+}
+.netflix-divider { width: 1px; height: 30px; background: rgba(255,255,255,0.1); }
+.netflix-context {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.netflix-hero h2 {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+.netflix-hero p { font-size: 14px; color: var(--muted); max-width: 520px; line-height: 1.7; }
+
+.netflix-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border-top: 1px solid var(--border);
+}
+.nf-stat { background: var(--bg2); padding: 24px 28px; text-align: center; }
+.nf-stat-val { font-family: var(--font-display); font-size: 28px; color: var(--text); margin-bottom: 4px; }
+.nf-stat-lbl { font-size: 11px; color: var(--muted); font-family: var(--font-mono); letter-spacing: 0.5px; }
+
+.netflix-tabs-nav {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  overflow-x: auto;
+}
+.netflix-tabs-nav::-webkit-scrollbar { display: none; }
+
+.nf-tab {
+  padding: 16px 20px;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-family: var(--font-body);
+  background: none;
+  border-left: none; border-right: none; border-top: none;
+  outline: none;
+}
+.nf-tab:hover { color: var(--text); }
+.nf-tab.active { color: var(--red); border-bottom-color: var(--red); }
+
+.nf-panels { padding: 32px; }
+.nf-panel { display: none; }
+.nf-panel.active { display: block; }
+
+.nf-panel h3 { font-family: var(--font-display); font-size: 22px; margin-bottom: 16px; color: var(--text); }
+.nf-panel p { font-size: 14px; color: rgba(232,230,224,0.75); line-height: 1.8; margin-bottom: 14px; }
+
+.concept-link {
+  display: inline-block;
+  background: rgba(229,9,20,0.1);
+  color: #e07070;
+  border: 1px solid rgba(229,9,20,0.2);
+  border-radius: 4px;
+  padding: 1px 7px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.3px;
+  vertical-align: middle;
 }
 
-.carousel-card {
-    background: #1a1a1a;
-    border: 1px solid rgba(229,9,20,0.25);
-    border-radius: 10px;
-    padding: 22px 20px;
-    min-height: 160px;
+.nf-insight {
+  background: rgba(229,9,20,0.05);
+  border: 1px solid rgba(229,9,20,0.12);
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-top: 20px;
 }
-
-.carousel-card h3 {
-    color: #E50914;
-    font-size: 15px;
-    margin-bottom: 12px;
+.nf-insight-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--red);
+  text-transform: uppercase;
+  margin-bottom: 8px;
 }
+.nf-insight p { font-size: 13px; color: var(--muted); margin-bottom: 0; line-height: 1.65; }
 
-.carousel-card p {
-    font-size: 13px;
-    line-height: 1.65;
-    color: #ccc;
-    text-align: justify;
+.timeline { position: relative; margin-top: 16px; padding-left: 20px; border-left: 1px solid var(--border2); }
+.timeline-item { position: relative; margin-bottom: 20px; }
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -24px; top: 6px;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--red);
+  opacity: 0.8;
 }
-
-.carousel-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 38px;
-    height: 38px;
-    background: rgba(20,20,20,0.97);
-    border: 1px solid rgba(229,9,20,0.5);
-    color: #E50914;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 5;
-    transition: background 0.2s;
-    line-height: 1;
-}
-
-.carousel-btn:hover { background: #1c1c1c; }
-.carousel-btn.prev { left: -18px; }
-.carousel-btn.next { right: -18px; }
-
-.carousel-dots {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 14px;
-}
-
-.dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #444;
-    cursor: pointer;
-    transition: background 0.25s, transform 0.25s;
-}
-
-.dot.active {
-    background: #E50914;
-    transform: scale(1.3);
-}
+.timeline-year { font-family: var(--font-mono); font-size: 10px; color: var(--red); letter-spacing: 1px; margin-bottom: 4px; }
+.timeline-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
+.timeline-text strong { color: var(--text); font-weight: 500; }
 
 /* ====== MODAL ====== */
-.overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    display: none;
-    z-index: 100;
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: none; z-index: 100; }
+.modal {
+  position: fixed; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--bg2);
+  border: 1px solid var(--accent);
+  padding: 24px; border-radius: 12px;
+  max-width: 420px; width: 90%;
+  display: none; text-align: justify;
+  line-height: 1.7; z-index: 101;
+  font-size: 14px; color: rgba(232,230,224,0.85);
 }
 
-.modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: #111;
-    border: 1px solid #E50914;
-    padding: 24px;
-    border-radius: 10px;
-    max-width: 420px;
-    width: 90%;
-    display: none;
-    text-align: justify;
-    line-height: 1.6;
-    z-index: 101;
-    font-size: 14px;
+/* ====== ANIMATIONS ====== */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-in { animation: fadeUp 0.5s ease both; }
+.delay-1 { animation-delay: 0.06s; }
+.delay-2 { animation-delay: 0.12s; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 3px; }
+
+@media (max-width: 700px) {
+  .wrapper { padding: 0 16px 60px; }
+  .netflix-hero { padding: 28px 20px 24px; }
+  .netflix-stats { grid-template-columns: 1fr; }
+  .nf-panels { padding: 20px; }
+  .term-trigger { grid-template-columns: 40px 1fr auto; padding: 14px 16px; }
 }
 </style>
 </head>
 <body>
-
 <div class="wrapper">
-    <h1>Integración Vertical y Organización Industrial de Netflix</h1>
 
-    <!-- SECCIÓN TEÓRICA CON CARRUSEL -->
-    <div class="card">
-        <h2>De mercado a empresa: el equilibrio óptimo de la integración vertical</h2>
+  <!-- ENCABEZADO -->
+  <div class="page-header animate-in">
+    <h1>Integración Vertical y<br><em>Organización Industrial</em> de Netflix</h1>
+  </div>
 
-        <div class="carousel-wrapper">
-            <button class="carousel-btn prev" id="prevBtn">&#8249;</button>
+  <!-- 01 TÉRMINOS CLAVE -->
+  <div class="section-block animate-in delay-1">
+    <div class="section-title">01 — Términos clave</div>
+    <div class="terms-grid" id="terms-grid"></div>
+  </div>
 
-            <div class="carousel-viewport">
-                <div class="carousel-track" id="carouselTrack">
-                    <!-- Slides -->
-                    <div class="carousel-slide">
-                        <div class="carousel-card">
-                            <h3>¿Por qué la empresa?</h3>
-                            <p>Desde la perspectiva de la Organización Industrial, la empresa puede entenderse como una alternativa al mercado cuando los <a onclick="openModal('transaccion')">costos de transacción</a> superan los beneficios de realizar intercambios descentralizados.</p>
-                        </div>
-                    </div>
-                    <div class="carousel-slide">
-                        <div class="carousel-card">
-                            <h3>Costos de transacción</h3>
-                            <p>Participar en el mercado no es gratuito: implica buscar información, negociar contratos y supervisar su cumplimiento, lo que puede generar fricciones en la toma de decisiones.</p>
-                        </div>
-                    </div>
-                    <div class="carousel-slide">
-                        <div class="carousel-card">
-                            <h3>Variables clave de Williamson</h3>
-                            <p>Williamson incorpora elementos como la <a onclick="openModal('especificidad')">especificidad de activos</a>, la incertidumbre y la frecuencia de las transacciones para explicar cuándo es mejor internalizar actividades.</p>
-                        </div>
-                    </div>
-                    <div class="carousel-slide">
-                        <div class="carousel-card">
-                            <h3>Trade-off y el caso Netflix</h3>
-                            <p>Integrar actividades dentro de la empresa genera <a onclick="openModal('coordinacion')">costos de coordinación</a>, por lo que el nivel óptimo de integración encuentra un equilibrio entre esos costos y los de mercado.</p>
-                        </div>
-                    </div>
-                </div>
+  <!-- 02 CASO APLICADO -->
+  <div class="section-block animate-in delay-2">
+    <div class="section-title">02 — Caso aplicado</div>
+    <div class="netflix-section">
+
+      <div class="netflix-hero">
+        <div class="netflix-logo-row">
+          <div class="netflix-logo">NETFLIX</div>
+          <div class="netflix-divider"></div>
+          <div class="netflix-context">Análisis bajo Cap. 2</div>
+        </div>
+        <h2>Una empresa de contenido<br>vista desde Coase</h2>
+        <p>Netflix encarna cada concepto del Capítulo 2: surgió para eliminar costos de transacción, se integró verticalmente para escapar del hold-up, y enfrenta uno de los problemas de agencia más estudiados del siglo XXI.</p>
+      </div>
+
+      <div class="netflix-stats">
+        <div class="nf-stat"><div class="nf-stat-val">~300M</div><div class="nf-stat-lbl">suscriptores globales</div></div>
+        <div class="nf-stat"><div class="nf-stat-val">$17B+</div><div class="nf-stat-lbl">gasto en contenido anual</div></div>
+        <div class="nf-stat"><div class="nf-stat-val">190+</div><div class="nf-stat-lbl">países con presencia</div></div>
+      </div>
+
+      <div class="netflix-tabs-nav">
+        <button class="nf-tab active" data-panel="nf-1">Naturaleza</button>
+        <button class="nf-tab" data-panel="nf-2">Integración Vertical</button>
+        <button class="nf-tab" data-panel="nf-3">Problema de Agencia</button>
+        <button class="nf-tab" data-panel="nf-4">Objetivo de la empresa</button>
+        <button class="nf-tab" data-panel="nf-5">Evolución histórica</button>
+      </div>
+
+      <div class="nf-panels">
+        <div class="nf-panel active" id="nf-1">
+          <h3>¿Por qué existe Netflix?</h3>
+          <p>Según Coase, las empresas nacen para <span class="concept-link">evitar costos de transacción</span>. Netflix internalizó la distribución de entretenimiento en un momento en que los videoclubs imponían alquileres costosos, penalizaciones arbitrarias y acceso limitado al catálogo — todos costos de usar el mercado.</p>
+          <p>Al integrar bajo una cadena de mando única: <strong>recomendación algorítmica + distribución digital + producción propia</strong>, Netflix eliminó la necesidad de negociar con intermediarios en cada transacción. La plataforma es la empresa en términos de Coase: un conjunto de procesos verticalmente relacionados que sustituyen al mercado.</p>
+          <div class="nf-insight">
+            <div class="nf-insight-label">Conexión con Coase (1939)</div>
+            <p>Antes de Netflix, un consumidor debía: ir a la tienda (costo de búsqueda), negociar disponibilidad (costo de información), pagar por título (costo de transacción), devolver a tiempo (costo de ejecución). Netflix eliminó todos estos costos con una suscripción fija.</p>
+          </div>
+        </div>
+
+        <div class="nf-panel" id="nf-2">
+          <h3>Del hold-up a Netflix Originals</h3>
+          <p>En sus primeros años como plataforma de streaming, Netflix dependía completamente de los estudios de Hollywood para su catálogo. Esto creó el clásico problema de <span class="concept-link">activos específicos</span>: Netflix había invertido en infraestructura, base de usuarios y algoritmos — todos atados al contenido de terceros.</p>
+          <p>Los estudios lo sabían. Disney, Warner y Universal podían elevar precios o retirar contenido unilateralmente — un <span class="concept-link">hold-up</span> perfecto. La respuesta de Netflix fue la integración vertical hacia la producción: crear sus propios contenidos (House of Cards, Stranger Things, The Crown), eliminando el poder de negociación de los estudios.</p>
+          <p>Sin embargo, Netflix NO integró la fabricación de dispositivos ni la infraestructura tecnológica. ¿Por qué? Porque el mercado de servidores (Amazon AWS) y el de televisores son <strong>competitivos</strong> — exactamente lo que Williamson predice: cuando el proveedor no puede comportarse oportunistamente, la integración vertical no tiene sentido.</p>
+          <div class="nf-insight">
+            <div class="nf-insight-label">Williamson (1985) aplicado</div>
+            <p>Netflix integra donde hay riesgo de hold-up (contenido exclusivo) y externaliza donde el mercado es competitivo (servidores, dispositivos). El resultado es un grado de integración I* que minimiza la suma de costos de transacción y coordinación.</p>
+          </div>
+        </div>
+
+        <div class="nf-panel" id="nf-3">
+          <h3>Accionistas vs. directivos en Netflix</h3>
+          <p>Los ejecutivos de Netflix (agentes) y sus accionistas (principales) tienen intereses parcialmente distintos. El CEO podría priorizar el crecimiento agresivo de suscriptores — una métrica visible y glamorosa — por sobre la rentabilidad sostenida que los accionistas realmente valoran.</p>
+          <p>Netflix usa el mecanismo descrito en el Recuadro 2.3 del capítulo: <strong>opciones sobre acciones</strong>. Al atar la compensación ejecutiva al precio de la acción, se alinean parcialmente los intereses. Pero el problema no desaparece: un CEO con opciones podría asumir riesgos excesivos para inflar el precio de corto plazo.</p>
+          <p>El gasto de $17B+ anuales en contenido es difícil de justificar sólo con maximización de valor accionista. Parte refleja preferencias de la administración por escala y relevancia cultural — un clásico costo de agencia.</p>
+          <div class="nf-insight">
+            <div class="nf-insight-label">Jensen y Meckling (1976) aplicado</div>
+            <p>El mercado de capitales actúa como mecanismo disciplinador: cuando Netflix anunció en 2022 que perdía suscriptores, la acción cayó 70% en un día, forzando cambios estratégicos. El mercado es el principal que vigila cuando los accionistas dispersos no pueden hacerlo.</p>
+          </div>
+        </div>
+
+        <div class="nf-panel" id="nf-4">
+          <h3>¿Maximiza beneficios Netflix?</h3>
+          <p>Durante casi una década, Netflix priorizó <strong>crecimiento de suscriptores</strong> por sobre las ganancias, incurriendo en pérdidas masivas de caja libre. Este comportamiento se asemeja a lo descrito en la Figura 2.3 del capítulo: la empresa operaba como maximizadora de ventas, sujeta a no tener pérdidas insostenibles.</p>
+          <p>El giro llegó en 2022. Tras perder suscriptores por primera vez en una década, Netflix adoptó tres medidas que sólo tienen sentido bajo un objetivo de maximización de beneficios: lanzó un plan con publicidad, eliminó el uso compartido de contraseñas, y redujo su presupuesto de contenido.</p>
+          <p>Este caso demuestra lo que el capítulo argumenta: <span class="concept-link">conocer el verdadero objetivo de la empresa es esencial para predecir su comportamiento estratégico</span>. El comportamiento 2012-2021 y el de 2022+ parecen empresas distintas.</p>
+          <div class="nf-insight">
+            <div class="nf-insight-label">Conclusión teórica</div>
+            <p>La presión de los accionistas y la competencia (Disney+, HBO Max, Apple TV+) actuaron como mecanismos disciplinadores que forzaron a Netflix a revelar y corregir su verdadero objetivo. El mercado como principal funcionó.</p>
+          </div>
+        </div>
+
+        <div class="nf-panel" id="nf-5">
+          <h3>La integración vertical de Netflix en el tiempo</h3>
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-year">1997 — 2007</div>
+              <div class="timeline-text"><strong>DVD por correo.</strong> Proceso único: distribución. Alta dependencia del mercado postal y de los estudios. Costos de transacción altos con videoclubs competidores.</div>
             </div>
-
-            <button class="carousel-btn next" id="nextBtn">&#8250;</button>
+            <div class="timeline-item">
+              <div class="timeline-year">2007 — 2011</div>
+              <div class="timeline-text"><strong>Streaming sin producción.</strong> Integra distribución digital, pero depende 100% de licencias de estudios. Nace el riesgo de hold-up con proveedores de contenido.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-year">2012 — 2018</div>
+              <div class="timeline-text"><strong>Netflix Originals.</strong> Integración vertical hacia la producción para escapar del hold-up. House of Cards (2013) es el punto de inflexión. Williamson lo habría predicho.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-year">2019 — 2021</div>
+              <div class="timeline-text"><strong>Expansión global.</strong> Producción local en 30+ países. Activos específicos masivos (estudios, contratos, talento). El grado de integración supera I*: costos de coordinación superan los beneficios.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-year">2022 — hoy</div>
+              <div class="timeline-text"><strong>Reajuste al I* óptimo.</strong> Reducción de personal, recorte de contenido, nuevas alianzas con estudios. La empresa busca el punto de mínimo costo total — exactamente la Figura 2.2 del capítulo.</div>
+            </div>
+          </div>
         </div>
-
-        <div class="carousel-dots" id="dotsContainer"></div>
+      </div>
     </div>
+  </div>
 
-    <!-- APLICACIÓN PRÁCTICA -->
+  <!-- INTERACTIVOS -->
+  <div class="section-block">
     <div class="card">
-        <h2>De la teoría a la práctica: el caso Netflix</h2>
-        <p>En esta sección, el análisis se traslada desde la teoría hacia un caso real: <b>Netflix</b>. La empresa se ha posicionado como uno de los actores más influyentes en la industria del entretenimiento digital, destacando por la forma en que organiza sus actividades y toma decisiones estratégicas en un entorno altamente competitivo.</p>
-        <p>Más allá de su crecimiento, lo relevante es entender <b>cómo y por qué</b> la empresa estructura su funcionamiento de la manera en que lo hace. Esto permite observar, en la práctica, cómo las empresas enfrentan el desafío de coordinar sus operaciones, adaptarse al mercado y sostener su eficiencia a lo largo del tiempo.</p>
-        <p>A continuación, podrás explorar de forma interactiva este proceso, visualizando cómo se configura la organización de la empresa y cómo se ajusta su estrategia en función de distintos factores económicos.</p>
+      <h2>Gráfico Interactivo: Nivel Óptimo de Integración Vertical</h2>
+      <div style="margin-top:16px;">
+        <iframe id="interactivo2" src="Interactivo 2.html" style="width:100%;border:none;border-radius:12px;"></iframe>
+      </div>
     </div>
+  </div>
 
-    <!-- INTERACTIVO 1 -->
-    <div class="card">
-        <h2>Interacción entre producción y distribución en Netflix</h2>
-        <div class="embed-box">
-            <iframe id="interactivo1" src="Interactivo 1.html"></iframe>
-        </div>
-    </div>
-
-    <!-- INTERACTIVO 2 -->
-    <div class="card">
-        <h2>Gráfico Interactivo: Nivel Óptimo de Integración Vertical</h2>
-        <div class="embed-box">
-            <iframe id="interactivo2" src="Interactivo 2.html"></iframe>
-        </div>
-    </div>
 </div>
 
 <!-- OVERLAY Y MODAL -->
 <div class="overlay" id="overlay" onclick="closeModal()"></div>
-<div class="modal" id="modal"></div>
+<div class="modal"   id="modal"></div>
 
 <script>
-// ====== MODAL ======
+/* ====== MODAL ====== */
 const modal   = document.getElementById('modal');
 const overlay = document.getElementById('overlay');
 
 function openModal(type) {
-    const defs = {
-        transaccion:  '<b>Costos de transacción:</b><br><br>Son los costos que aparecen cuando una empresa decide usar el mercado en lugar de hacer algo por sí misma. Incluyen el tiempo y los recursos necesarios para buscar proveedores, negociar acuerdos y asegurarse de que se cumplan.',
-        coordinacion: '<b>Costos de coordinación:</b><br><br>Son los costos que surgen dentro de la empresa al organizar y supervisar sus propias actividades. A medida que la empresa crece e integra más funciones, necesita más control, gestión y estructura, lo que puede volverla más compleja.',
-        especificidad: '<b>Especificidad de activos:</b><br><br>Se refiere al grado en que un recurso o inversión está diseñado para un uso específico y pierde valor si se utiliza en otra cosa. Esto genera dependencia entre las partes involucradas en una transacción.'
-    };
-    modal.innerHTML = defs[type] || '';
-    modal.style.display = 'block';
-    overlay.style.display = 'block';
+  const defs = {
+    transaccion:   '<b>Costos de transacción:</b><br><br>Son los costos que aparecen cuando una empresa decide usar el mercado en lugar de hacer algo por sí misma. Incluyen el tiempo y los recursos necesarios para buscar proveedores, negociar acuerdos y asegurarse de que se cumplan.',
+    coordinacion:  '<b>Costos de coordinación:</b><br><br>Son los costos que surgen dentro de la empresa al organizar y supervisar sus propias actividades. A medida que la empresa crece e integra más funciones, necesita más control, gestión y estructura, lo que puede volverla más compleja.',
+    especificidad: '<b>Especificidad de activos:</b><br><br>Se refiere al grado en que un recurso o inversión está diseñado para un uso específico y pierde valor si se utiliza en otra cosa. Esto genera dependencia entre las partes involucradas en una transacción.'
+  };
+  modal.innerHTML = defs[type] || '';
+  modal.style.display = 'block';
+  overlay.style.display = 'block';
 }
-
 function closeModal() {
-    modal.style.display = 'none';
-    overlay.style.display = 'none';
+  modal.style.display = 'none';
+  overlay.style.display = 'none';
 }
 
-// ====== CARRUSEL ======
-const track     = document.getElementById('carouselTrack');
-const slides    = track.querySelectorAll('.carousel-slide');
-const dotsEl    = document.getElementById('dotsContainer');
-const VISIBLE   = 2;
-const total     = slides.length;
-const maxIndex  = total - VISIBLE; // 0 a 2
-let current     = 0;
-let locked      = false;
+/* ====== TÉRMINOS ====== */
+const terms = [
+  { num:"01", name:"Costos de transacción", tagline:"La razón fundamental por la que existen las empresas", badge:{text:"Fundacional",cls:"badge-core"},
+    def:"Son todos los costos asociados a usar el mercado para coordinar actividades económicas: buscar información, negociar condiciones, vigilar el cumplimiento y ejecutar acuerdos entre partes independientes. Cuando estos costos superan los de coordinar internamente, la empresa tiene sentido de existir.",
+    example:"Comprar piezas de automóvil en el mercado libre implica: comparar proveedores (información), negociar precios y calidad (negociación), y verificar entregas y estándares (vigilancia). Ford prefirió fabricarlas internamente — hasta que el mercado se volvió lo suficientemente competitivo para que esos costos cayeran.",
+    concepts:["Coase (1939)","Cadena de mando","Sustitución del mercado","Costo de negociar"] },
+  { num:"02", name:"Integración vertical", tagline:"Internalizar procesos que el mercado haría peor", badge:{text:"Tamaño",cls:"badge-size"},
+    def:"Ocurre cuando una empresa incorpora dentro de su estructura procesos que podrían ser realizados por el mercado mediante transacciones entre empresas independientes. Puede ser hacia atrás (producción de insumos) o hacia adelante (distribución). Su conveniencia depende de comparar costos de transacción versus costos de coordinación interna.",
+    example:"<strong>Endesa + Enersis (Chile)</strong>: una genera electricidad y la otra la distribuye, bajo un mismo grupo de propiedad. En contraste, <strong>Ford y Visteon</strong>: Ford vendió su filial de autopartes en 2000 (spin-off) cuando el mercado de piezas se volvió competitivo — la integración dejó de ser conveniente.",
+    concepts:["Williamson (1985)","Eficiencia técnica","Eficiencia de agencia","Spin-off","Coase"] },
+  { num:"03", name:"Hold-up (quedar atrapado)", tagline:"El peligro de invertir antes de asegurar el acuerdo", badge:{text:"Costo no trivial",cls:"badge-cost"},
+    def:"Situación donde un inversionista que ya realizó una inversión específica queda 'atrapado' frente a su contraparte, quien puede exigir condiciones más favorables unilateralmente. El problema existe porque el costo de abandonar la transacción es muy alto una vez realizada la inversión. La diferencia entre el valor dentro y fuera de la relación se llama cuasi-renta.",
+    example:"El <strong>exportador de frambuesas</strong> invirtió $160 millones en producción. Al momento de transportar, el único transportista disponible elevó el precio casi al valor de toda la cosecha, sabiendo que el exportador no podía abandonar la transacción. La solución habría sido un contrato previo que fijara el precio del flete.",
+    concepts:["Klein, Crawford & Alchian","Cuasi-renta","Oportunismo","Activos específicos"] },
+  { num:"04", name:"Activos específicos", tagline:"Inversiones atadas a una sola relación comercial", badge:{text:"Costo no trivial",cls:"badge-cost"},
+    def:"Un activo es específico a una segunda parte cuando su valor dentro de esa relación comercial particular es mayor que el que tendría en cualquier uso alternativo. Esta brecha de valor (cuasi-renta) crea incentivos para el oportunismo: la contraparte tiene incentivos para capturar ese exceso de valor renegociando condiciones.",
+    example:"Una <strong>bodega construida junto a una sola fábrica</strong> pierde gran parte de su valor si esa fábrica cierra — es un activo específico. Si el mercado de bodegas fuera perfectamente competitivo (muchas fábricas necesitando bodegas), la especificidad desaparece y con ella el riesgo de hold-up.",
+    concepts:["Cuasi-renta","Oportunismo","Hold-up","Williamson","Klein & Alchian"] },
+  { num:"05", name:"Contratos incompletos", tagline:"Ningún contrato puede prever el futuro completo", badge:{text:"Costo no trivial",cls:"badge-cost"},
+    def:"Es imposible que las partes de una transacción acuerden todas las contingencias futuras y especifiquen exactamente los derechos y obligaciones para cada posible estado del mundo. A mayor incertidumbre sobre el futuro, mayor la incompletitud del contrato y mayor la conveniencia de internalizar la transacción dentro de la empresa.",
+    example:"El exportador de frambuesas podría haber firmado un contrato con el transportista, pero las contingencias (clima, precio del combustible, disponibilidad de camiones) hacen difícil prever todo. En <strong>países con sistemas legales débiles</strong>, los litigios son largos e impredecibles — por eso la integración vertical es mayor en economías menos desarrolladas.",
+    concepts:["Incertidumbre","Costos de negociar","Sistema legal","Williamson"] },
+  { num:"06", name:"Eficiencia técnica vs. de agencia", tagline:"El dilema de integrar o externalizar", badge:{text:"Tamaño",cls:"badge-size"},
+    def:"Williamson distingue dos fuerzas al decidir la integración. La eficiencia técnica favorece externalizar para aprovechar economías de escala en proveedores especializados. La eficiencia de agencia favorece integrar para reducir costos de transacción y oportunismo. La empresa óptima minimiza la suma de ambos costos en el nivel de integración I*.",
+    example:"Una <strong>AFP (fondo de pensiones)</strong> podría gestionar sus inversiones internamente, pero los costos de escala de fondos especializados son tan grandes que externalizar es eficiente. En cambio, los <strong>periódicos están más integrados a imprentas</strong> que las editoriales de libros, porque el costo de un retraso en la entrega es mucho mayor.",
+    concepts:["Williamson (1985)","Economías de escala","Nivel I* óptimo","Figura 2.2"] },
+  { num:"07", name:"Relación principal-agente", tagline:"El que decide no siempre es el dueño", badge:{text:"Agencia",cls:"badge-agency"},
+    def:"Un principal (dueño o accionista) contrata a un agente (gerente, empleado) para que actúe en su nombre, delegando decisiones. El problema surge cuando el principal no puede observar perfectamente el esfuerzo del agente, generando incentivos para que el agente priorice sus propios intereses por sobre los del principal.",
+    example:"Los <strong>accionistas de una empresa (principal)</strong> contratan un CEO (agente) para maximizar el valor de la firma. El CEO podría preferir proyectos de inversión que aumenten su poder y visibilidad, aunque no sean los más rentables. La solución clásica: <strong>opciones sobre acciones</strong> que alinean parcialmente el interés del agente con el del principal.",
+    concepts:["Jensen & Meckling (1976)","Monitoreo","Incentivos","Asimetría de información"] },
+  { num:"08", name:"Contratos compatibles en incentivos", tagline:"Un contrato que se cumple sin necesidad de vigilar", badge:{text:"Contratos",cls:"badge-contract"},
+    def:"Un contrato es compatible en incentivos cuando ambas partes lo cumplen voluntariamente porque les conviene hacerlo, sin necesidad de monitoreo externo. La clave: el agente carga con el riesgo del resultado — si trabaja bien, gana más; si trabaja mal, pierde. Esto alinea sus incentivos con los del principal de forma automática.",
+    example:"El <strong>dueño de taxi que alquila el vehículo al chofer</strong> crea el contrato compatible en incentivos ideal: el chofer se queda con la recaudación menos el alquiler, por lo que trabaja exactamente lo que maximiza su beneficio — que coincide con el del dueño. No hay necesidad de vigilar cuántas horas maneja.",
+    concepts:["Holmstrom","Riesgo moral","Pago variable","Eficiencia"] },
+  { num:"09", name:"Problema de agencia en equipos", tagline:"El efecto del pasajero en el trabajo grupal", badge:{text:"Agencia",cls:"badge-agency"},
+    def:"Cuando el trabajo en equipo no permite identificar el esfuerzo individual, cada miembro tiene incentivos para esforzarse menos de lo óptimo (free-rider). Si el pago es X/n compartido igualmente, el beneficio individual del esfuerzo adicional se diluye entre todos los miembros, aunque el costo del esfuerzo recae sólo en quien lo realiza.",
+    example:"Un <strong>trabajo grupal de MBA</strong>: si la nota final se divide en tres partes iguales, el estudiante que sacrifica una fiesta para mejorar el trabajo recibe sólo 1 punto de los 3 que aportó su esfuerzo. La solución: un contrato 'todo o nada' que hace que evaluar marginalmente el esfuerzo no tenga sentido.",
+    concepts:["Alchian & Demsetz (1972)","Free-rider","Monitoreo grupal","Bonos de productividad"] },
+  { num:"10", name:"Spin-off", tagline:"Separar para crear dos empresas donde había una", badge:{text:"Tamaño",cls:"badge-size"},
+    def:"Operación mediante la cual una empresa distribuye a sus propios accionistas las acciones de una subsidiaria, creando dos corporaciones independientes. Se usa cuando la integración vertical deja de ser conveniente — el mercado del proveedor se vuelve más competitivo y el riesgo de hold-up desaparece — haciendo que la desintegración genere valor.",
+    example:"<strong>Ford separó a Visteon (2000)</strong> y GM separó a Delphi (1999). Ambas eran productoras de autopartes. Al volverse el mercado de piezas más competitivo globalmente, el riesgo de hold-up disminuyó. Las acciones de Ford subieron casi 2% el día del anuncio — el mercado valoró la desintegración.",
+    concepts:["Reducción I*","Mercados competitivos","Ford-Visteon","GM-Delphi","Coase"] }
+];
 
-// Crear dots (uno por slide real, no por par)
-for (let i = 0; i <= maxIndex; i++) {
-    const d = document.createElement('div');
-    d.className = 'dot' + (i === 0 ? ' active' : '');
-    d.addEventListener('click', () => goTo(i));
-    dotsEl.appendChild(d);
+function buildTerms() {
+  const grid = document.getElementById('terms-grid');
+  terms.forEach((t, i) => {
+    const card = document.createElement('div');
+    card.className = 'term-card';
+    card.style.animationDelay = (i * 0.03) + 's';
+    card.innerHTML = `
+      <div class="term-trigger" role="button" tabindex="0" aria-expanded="false">
+        <div class="term-num">${t.num}</div>
+        <div>
+          <div class="term-name">${t.name}<span class="term-badge ${t.badge.cls}">${t.badge.text}</span></div>
+          <div class="term-tagline">${t.tagline}</div>
+        </div>
+        <div class="term-arrow">▾</div>
+      </div>
+      <div class="term-body">
+        <div class="term-body-inner">
+          <p class="term-def">${t.def}</p>
+          <div class="term-example">
+            <div class="example-label">Ejemplo aplicado</div>
+            <p class="example-text">${t.example}</p>
+          </div>
+        </div>
+      </div>`;
+
+    const trigger = card.querySelector('.term-trigger');
+    const body    = card.querySelector('.term-body');
+
+    function toggle() {
+      const isOpen = card.classList.contains('open');
+      document.querySelectorAll('.term-card.open').forEach(c => {
+        c.classList.remove('open');
+        c.querySelector('.term-body').style.maxHeight = '0';
+        c.querySelector('.term-trigger').setAttribute('aria-expanded','false');
+      });
+      if (!isOpen) {
+        card.classList.add('open');
+        body.style.maxHeight = body.scrollHeight + 'px';
+        trigger.setAttribute('aria-expanded','true');
+      }
+    }
+    trigger.addEventListener('click', toggle);
+    trigger.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();} });
+    grid.appendChild(card);
+  });
 }
 
-function updateDots() {
-    dotsEl.querySelectorAll('.dot').forEach((d, i) => {
-        d.classList.toggle('active', i === current);
-    });
-}
-
-function goTo(index) {
-    if (locked) return;
-    current = Math.max(0, Math.min(index, maxIndex));
-    // Cada slide ocupa 50% del viewport → desplazar current * 50%
-    track.style.transform = `translateX(-${current * 50}%)`;
-    updateDots();
-}
-
-function move(dir) {
-    if (locked) return;
-    locked = true;
-    goTo(current + dir);
-    setTimeout(() => { locked = false; }, 420);
-}
-
-document.getElementById('prevBtn').addEventListener('click', () => move(-1));
-document.getElementById('nextBtn').addEventListener('click', () => move(1));
-
-// Swipe táctil
-let touchStartX = 0;
-track.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
-track.addEventListener('touchend',   e => {
-    const diff = touchStartX - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 40) move(diff > 0 ? 1 : -1);
+/* ====== TABS NETFLIX ====== */
+document.querySelectorAll('.nf-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.nf-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.nf-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.panel).classList.add('active');
+  });
 });
+
+buildTerms();
 </script>
 </body>
 </html>
