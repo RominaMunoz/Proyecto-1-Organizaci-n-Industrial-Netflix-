@@ -537,9 +537,11 @@ a { color: var(--accent); cursor: pointer; text-decoration: underline; }
 
 <script>
 /* ====== MODAL ====== */
+// Elementos HTML usados para mostrar una ventana modal con definiciones cuando se hace clic en enlaces.
 const modal   = document.getElementById('modal');
 const overlay = document.getElementById('overlay');
 
+// Muestra el modal con el texto correspondiente al tipo de término seleccionado.
 function openModal(type) {
   const defs = {
     transaccion:   '<b>Costos de transacción:</b><br><br>Son los costos que aparecen cuando una empresa decide usar el mercado en lugar de hacer algo por sí misma. Incluyen el tiempo y los recursos necesarios para buscar proveedores, negociar acuerdos y asegurarse de que se cumplan.',
@@ -550,12 +552,15 @@ function openModal(type) {
   modal.style.display = 'block';
   overlay.style.display = 'block';
 }
+
+// Oculta el modal y el fondo oscuro cuando se cierra.
 function closeModal() {
   modal.style.display = 'none';
   overlay.style.display = 'none';
 }
 
 /* ====== TÉRMINOS ====== */
+// Datos de los términos clave que se listarán en la sección principal.
 const terms = [
   { num:"01", name:"Costos de transacción", tagline:"La razón fundamental por la que existen las empresas", badge:{text:"Fundacional",cls:"badge-core"},
     def:"Son todos los costos asociados a usar el mercado para coordinar actividades económicas: buscar información, negociar condiciones, vigilar el cumplimiento y ejecutar acuerdos entre partes independientes. Cuando estos costos superan los de coordinar internamente, la empresa tiene sentido de existir.",
@@ -601,6 +606,7 @@ const terms = [
 
 function buildTerms() {
   const grid = document.getElementById('terms-grid');
+  // Crea una tarjeta desplegable para cada término y la agrega al contenedor.
   terms.forEach((t, i) => {
     const card = document.createElement('div');
     card.className = 'term-card';
@@ -629,6 +635,7 @@ function buildTerms() {
 
     function toggle() {
       const isOpen = card.classList.contains('open');
+      // Cierra cualquier tarjeta abierta antes de abrir la nueva.
       document.querySelectorAll('.term-card.open').forEach(c => {
         c.classList.remove('open');
         c.querySelector('.term-body').style.maxHeight = '0';
@@ -647,6 +654,8 @@ function buildTerms() {
 }
 
 /* ====== TABS NETFLIX ====== */
+// Controla el comportamiento de los botones de pestañas dentro del caso Netflix.
+// Al hacer clic en una pestaña, desactiva las demás y muestra solo el panel correspondiente.
 document.querySelectorAll('.nf-tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.nf-tab').forEach(t => t.classList.remove('active'));
